@@ -1,9 +1,10 @@
 import React from 'react';
+import Todo from './Todo';
 
-const List = ({ title, todos }) => (
+const List = ({ title, todos, updateTodo }) => (
   <div>
     <h1>{title}</h1> 
-    { todos.map( t => <li key={t.id}>{t.todosName}</li>) }
+    { todos.map( t => <Todo key={t.id} {...t} updateTodo={updateTodo} />) }
   </div>
 )
 

@@ -1,13 +1,20 @@
 import React, { Component } from 'react';
 import List from './components/todos/List';
 import TodoForm from './components/todos/TodoForm';
+import Footer from './components/todos/Footer';
 
 class App extends Component {
   state = { todos: [
     { id: 1, todosName: 'Learn Rails', complete: true },
     { id: 2, todosName: 'Learn ReactJS', complete: false },
     { id: 3, todosName: 'Graduate', complete: false },
-  ]}
+  ],
+    filter: 'All'
+  }
+
+  setFilter = (filter) => {
+    this.setState({ filter })
+  }
 
   getUniqId = () => {
     //NOTE We are just using this as a helper function for id's since we aren't using a db yet
@@ -22,6 +29,20 @@ class App extends Component {
     this.setState({ todos: [newTodo, ...todos] })
   }
 
+  updateTodo = (id) => {
+    const { todos } = this.state
+    this.setState({
+      todos: todos.map( todo => {
+        if (todo.id === id) {
+          return {
+            ...todo,
+            complete: !todo.complete
+          }
+        }
+        return todo
+      })
+    })
+  }
   // allTodos = () => {
   //   // const todos = this.state.todos
   //   const { todos } = this.state
@@ -32,14 +53,27 @@ class App extends Component {
   //   })
   // }
 
+  visibleTodos = () => {
+    const { todos, filter } = this.state
+    switch(filter) {
+      case 'Active':
+        return todos.filter( t => !t.complete )
+      case 'Complete':
+        return todos.filter( t => t.complete )
+      default:
+        return todos
+    }
+  }
+
   render() {
-    const { todos } = this.state
+    const { filter } = this.state
     return(
       <div>
         <ul>
-         {/* { this.allTodos() }  */}
-         <TodoForm addTodo={this.addTodo} />
-         <List title='DPL' todos={todos} />
+          <Footer filter={filter} setFilter={this.setFilter} />
+          {/* { this.allTodos() }  */}
+          <TodoForm addTodo={this.addTodo} />
+          <List title='DPL' todos={this.visibleTodos()} updateTodo={this.updateTodo} />
         </ul>
       </div>
     )
